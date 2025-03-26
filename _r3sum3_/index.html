@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ENCRYPTED_DOCUMENT_VIEWER.exe</title>
+    <style>
+        :root {
+            --neon-green: #0f0;
+            --dark-bg: #0a0a0a;
+            --terminal-green: #00ff41;
+            --cyber-blue: #0ff;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            font-family: 'Courier New', monospace;
+            color: var(--terminal-green);
+            overflow: hidden;
+        }
+
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .terminal-window {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            border-bottom: 1px solid var(--neon-green);
+            z-index: 2;
+        }
+
+        .terminal-text {
+            margin: 5px 0;
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        .typing-effect {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 2s steps(40, end);
+        }
+
+        .pdf-container {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            padding-top: 80px;
+            box-sizing: border-box;
+            z-index: 2;
+        }
+
+        #pdf-viewer {
+            width: 100%;
+            height: calc(100% - 80px);
+            border: 1px solid var(--neon-green);
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.3);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .scan-line {
+            position: absolute;
+            top: 80px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--cyber-blue);
+            opacity: 0.5;
+            z-index: 3;
+            animation: scan 3s linear infinite;
+        }
+
+        @keyframes scan {
+            0% { top: 80px; }
+            100% { top: 100%; }
+        }
+
+        .glitch-overlay::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 255, 0, 0.1);
+            pointer-events: none;
+            z-index: 2;
+            animation: glitch 0.3s infinite;
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            z-index: 4;
+        }
+
+        .fallback-link {
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--neon-green);
+            text-decoration: none;
+            font-size: 16px;
+            z-index: 4;
+            display: none;
+        }
+
+        .fallback-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrix-bg"></canvas>
+
+    <div class="terminal-window">
+        <div class="terminal-text typing-effect">> INITIALIZING_SECURE_DOCUMENT_VIEWER.exe</div>
+        <div class="terminal-text typing-effect">> ESTABLISHING_ENCRYPTED_CONNECTION...</div>
+        <div class="terminal-text typing-effect">> ACCESS_GRANTED: DISPLAYING_CLASSIFIED_DOCUMENT</div>
+    </div>
+
+    <div class="scan-line"></div>
+
+    <div class="pdf-container glitch-overlay">
+        <div class="loading">DECRYPTING_DOCUMENT...</div>
+        <iframe
+            id="pdf-viewer"
+            src="https://drive.google.com/viewerng/viewer?embedded=true&url=https://portfolio.lxance.site/_r3sum3_/Prince_Resume_UPDATED.pdf"
+            frameborder="0"
+            allowfullscreen>
+        </iframe>
+        <a href="YOUR_PDF_URL_HERE" class="fallback-link" download>Download PDF</a>
+    </div>
+
+    <script>
+        // Matrix rain effect
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()';
+        const fontSize = 14;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function drawMatrix() {
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = '#0F0';
+            ctx.font = fontSize + 'px monospace';
+
+            for(let i = 0; i < drops.length; i++) {
+                const text = chars[Math.floor(Math.random() * chars.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        setInterval(drawMatrix, 35);
+
+        // Hide loading message when PDF loads
+        document.getElementById('pdf-viewer').onload = function() {
+            document.querySelector('.loading').style.display = 'none';
+        };
+
+        // Fallback for non-compatible browsers
+        document.getElementById('pdf-viewer').onerror = function() {
+            document.querySelector('.loading').style.display = 'none';
+            document.querySelector('.fallback-link').style.display = 'block';
+        };
+    </script>
+</body>
+</html>
